@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Hide-Passed-Pets",
+    "version": "1.0",
+    "description": "Remove all reddit posts concerning passed pets",
+    "icons": {
+        "48": "black_cat_icon_177458.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.reddit.com/*"
+            ],
+            "js": [
+                "hidepassedpets.js"
+            ]
+        }
+    ]
+}
