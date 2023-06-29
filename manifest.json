@@ -3,13 +3,18 @@
     "name": "Hide-Passed-Pets",
     "version": "1.0",
     "description": "Remove all reddit posts concerning passed pets",
+    "homepage_url": "https://github.com/DeepQuantum/hidepassedpets",
     "icons": {
-        "48": "black_cat_icon_177458.png"
+        "48": "cat_48.png",
+        "32": "cat_32.png"
     },
+    "permissions": [
+        "activeTab"
+    ],
     "content_scripts": [
         {
             "matches": [
-                "*://*.reddit.com/*"
+                "*://*.reddit.com/r/*"
             ],
             "js": [
                 "hidepassedpets.js"
