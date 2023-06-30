@@ -9,7 +9,9 @@
         "32": "cat_32.png"
     },
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "storage",
+        "tabs"
     ],
     "content_scripts": [
         {
@@ -20,5 +22,10 @@
                 "hidepassedpets.js"
             ]
         }
-    ]
+    ],
+    "browser_action": {
+        "default_icon": "icons/cat_32.png",
+        "default_title": "Hide Passed Pets",
+        "default_popup": "popup/index.html"
+    }
 }
