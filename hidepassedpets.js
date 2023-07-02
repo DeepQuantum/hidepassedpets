@@ -1,5 +1,5 @@
 const entries = document.getElementsByClassName("thing");
-const keywords = ["passed", "die", "died", "dead", "rip", "loss", "put down", "lost", "grief", "grieving", "rainbow bridge", "hit by a car", "goodbye", "mourning"]
+const keywords = ["passed", "die", "died", "dead", "rip", "loss", "put down", "grief", "grieving", "rainbow bridge", "hit by a car", "goodbye", "mourning"]
 const subredditKeywords = ["pet", "pets", "cat", "cats", "dog", "dogs", "animal"];
 let blockedEntries = new Array();
 let enabled = true;
@@ -19,23 +19,37 @@ function isPetSubredditURL() {
 function removeEntries() {
     if (!isPetSubredditURL()) return;
     for (const entry of entries) {
+        if (entry in blockedEntries) continue;
         for (const keyword of keywords) {
             let title = entry.getElementsByClassName("title")[0].innerText.toLowerCase();
-            if (title.match(new RegExp("\\b" + keyword + "\\b", "g")) && !blockedEntries.includes(title)) {
+            if (title.match(new RegExp("\\b" + keyword + "\\b", "g"))) {
                 entry.style.display = "none";
-                blockedEntries.push(title);
+                blockedEntries.push(entry);
             }
         }
     }
 }
 
+function addCatIconToTitle(entry) {
+    let title = entry.getElementsByClassName("title")[0];
+    let catIcon = document.createElement("img");
+    catIcon.classList.add("passed-pets-cat-icon");
+    catIcon.src = browser.runtime.getURL("icons/cat_32.png");
+    catIcon.style.marginRight = "5px";
+    catIcon.alt = "This post might be about a pet that has passed away."
+    title.insertBefore(catIcon, title.firstChild);
+}
 
 browser.runtime.onMessage.addListener(async (request) => {
     let length = 0;
+    console.log(request);
     if (request.unhide) {
         length = blockedEntries.length;
         unhideEntries();
         blockedEntries = new Array();
+    }
+    else if (request.requestCount) {
+        length = blockedEntries.length;
     }
     else {
         removeEntries();
@@ -46,8 +60,10 @@ browser.runtime.onMessage.addListener(async (request) => {
 });
 
 function unhideEntries() {
-    for (const entry of entries) {
+    for (const entry of blockedEntries) {
         entry.style.display = "block";
+        if (entry.getElementsByClassName("passed-pets-cat-icon").length == 0)
+            addCatIconToTitle(entry);
     }
 }
 
