@@ -1,19 +1,28 @@
 const entries = document.getElementsByClassName("thing");
-const keywords = ["passed", "die", "died", "dead", "rip", "loss", "lost", "grief", "grieving", "rainbow bridge", "hit by a car", "goodbye", "mourning"]
+const keywords = ["passed", "die", "died", "dead", "rip", "loss", "put down", "lost", "grief", "grieving", "rainbow bridge", "hit by a car", "goodbye", "mourning"]
+const subredditKeywords = ["pet", "pets", "cat", "cats", "dog", "dogs", "animal"];
 let blockedEntries = new Array();
 let enabled = true;
+
+function isPetSubredditURL() {
+    if (window.location.href.match(/reddit\.com\/r\/\w+\/comments/g) != null) {
+        return false;
+    }
+    for (const subredditKeyword of subredditKeywords) {
+        if (window.location.href.toLowerCase().includes(subredditKeyword)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function removeEntries() {
+    if (!isPetSubredditURL()) return;
     for (const entry of entries) {
         for (const keyword of keywords) {
             let title = entry.getElementsByClassName("title")[0].innerText.toLowerCase();
             if (title.match(new RegExp("\\b" + keyword + "\\b", "g")) && !blockedEntries.includes(title)) {
                 entry.style.display = "none";
-                if (localStorage.getItem("blocked-passed-pets-posts") == null) {
-                    localStorage.setItem("blocked-passed-pets-posts", 1);
-                }
-                else {
-                    localStorage.setItem("blocked-passed-pets-posts", parseInt(localStorage.getItem("blocked-passed-pets-posts")) + 1);
-                }
                 blockedEntries.push(title);
             }
         }
@@ -22,6 +31,7 @@ function removeEntries() {
 
 
 browser.runtime.onMessage.addListener(async (request) => {
+    let length = 0;
     if (request.unhide) {
         length = blockedEntries.length;
         unhideEntries();
